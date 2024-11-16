@@ -1,3 +1,4 @@
+// backend/index.ts
 import express from 'express';
 
 interface Task {
@@ -25,11 +26,20 @@ app.post('/tasks', (req, res) => {
 });
 
 app.put('/tasks/:id', (req, res) => {
-  // ... implementação da rota PUT
+  const { id } = req.params;
+  const { title, completed } = req.body;
+  const taskIndex = tasks.findIndex(task => task.id === +id);
+  if (taskIndex === -1) return res.status(404).json({ error: 'Task not found' });
+  tasks[taskIndex] = { ...tasks[taskIndex], title, completed };
+  res.json(tasks[taskIndex]);
 });
 
 app.delete('/tasks/:id', (req, res) => {
-  // ... implementação da rota DELETE
+  const { id } = req.params;
+  const taskIndex = tasks.findIndex(task => task.id === +id);
+  if (taskIndex === -1) return res.status(404).json({ error: 'Task not found' });
+  tasks.splice(taskIndex, 1);
+  res.sendStatus(204);
 });
 
 app.listen(3000, () => {
